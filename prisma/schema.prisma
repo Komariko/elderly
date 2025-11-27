@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. เพิ่ม Enum สำหรับเกรดรีวิว
+enum QualityRating {
+  EXCELLENT   // ดีมาก (x1.2)
+  GOOD        // ดี (x1.0)
+  BAD         // แย่ (x0.9)
+}
+
+enum PatientStatus {
+  NORMAL
+  WHEELCHAIR
+  BEDRIDDEN
+}
+
+model Job {
+  id            Int           @id @default(autoincrement())
+  distance      Float
+  patientStatus PatientStatus
+  
+  // --- เพิ่ม 2 ตัวนี้ครับ ---
+  startTime     DateTime      // เวลาเริ่มงาน (เอาไว้เช็คช่วงเวลา)
+  quality       QualityRating // ผลรีวิว (เอาไว้คูณคะแนน)
+  // ----------------------
+
+  points        Float         // เปลี่ยนเป็น Float (ทศนิยม) เพราะมีการคูณแล้วอาจไม่ลงตัว
+  isCompleted   Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+}
